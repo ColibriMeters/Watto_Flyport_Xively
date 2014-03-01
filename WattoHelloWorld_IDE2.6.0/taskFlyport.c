@@ -15,8 +15,8 @@ UINT8 NUM_MEAS = 4;	//Number of measures to be read
 #define xDelay(x) (portTickType)(x/portTICK_RATE_MS)
 char ServerName[] =   "api.xively.com";	// Defines the server to be accessed	
 char ServerPort[] = "8081";	// Defines the port to be accessed	
-static ROM char Resource[] = "/feeds/1055535203";	// Defines the URL to be requested, It containes the feed number to use.
-static ROM char XApiKey[] = "mQKqmRh5clE01YZzxYH63Vwz0tsOR6BKXePUm7pBZuyt26y4";	// Defines the Pachube API Key to use
+static ROM char Resource[] = "/feeds/YOURFEEDID";	// Defines the URL to be requested, It containes the feed number to use.
+static ROM char XApiKey[] = "YOURAPIKEY";	// Defines the Pachube API Key to use
 static ROM char GoodHTTPResponse[] = "{\"status\":200";	// Defines the URL to be requested, It containes the feed number to use.
 
 
@@ -47,7 +47,7 @@ void FlyportTask()
 	//Zero crossing info variable
 	int i, noV, noI;						
 	BOOL ZX, ZX_I, ZX_prev;
-	
+	BOOL PutResult;
 	//SET DELAY
 	UINT8 sm = SM_DELAY_WAIT;	
 	LONG startTimeAll;//TICK startTimeAll;
@@ -61,7 +61,6 @@ void FlyportTask()
 	IOInit(ZX_IIN, in);	//ZX_I
 	IOInit(6, out);		//RESET OUT
 	IOPut(6, on);		//PUT RESET HIGH
-	//IOInit(14, out);
 	IOInit(LED1, out);	//WATTO LED1
 	IOInit(LED2, out);	//WATTO LED2
 	IOInit(26, inup);	//Active Low Reset Init (NOT CONNECTED)
@@ -85,14 +84,9 @@ void FlyportTask()
 	LockComm();			//ADE lock communication
 	DelayMs(100);
 	InitAde();			//ADE initialization function
-	//EnergySet();		//Future use
 	DelayMs(100);
 	IAGainSet();		//ADE Curr ch.A Gain 
-	//OffsetCal();		//Future use
-	//WriteAdeRegUart32(VRMSOS, 0xDDDDDD);	//Future use
-	//WriteAdeRegUart32(AIRMSOS, 0xFFFFE88D);//Future use
-	//WriteAdeRegUart(0x303, 0x000000);		//Future use
-	//WriteAdeRegUart(0x305, 0xE420);		//Future use
+
 	xTaskResumeAll();
 	IOPut (LED2,off);	//LED2 off: end of ADE init signal
 		
@@ -185,12 +179,9 @@ void FlyportTask()
 				Resource, XApiKey, *CONV_DATA_ARRAY, *(CONV_DATA_ARRAY+1), *(CONV_DATA_ARRAY+2), *(CONV_DATA_ARRAY+3));
 
 				//Transmit request
-				if (MySocket == INVALID_SOCKET)
-					MySocket = XivelyConn(ServerName, ServerPort);
-				if (MySocket != INVALID_SOCKET)
-				{
-					XivelyPut(MySocket, tmpString);
-				}
+				PutResult = XivelyPut(MySocket, tmpString);
+				if(PutResult == FALSE)
+					Reset();
 				
 				IOPut (o4,off);	//end of transit request and start new waiting period signal
 				sm = SM_DELAY_WAIT;	//go directly to the "wait case"

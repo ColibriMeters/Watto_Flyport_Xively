@@ -46,15 +46,7 @@ BOOL XivelyPut(TCP_SOCKET MySocket, char* tmpString)
 	BOOL result;
 	int i;
 	static ROM char GoodHTTPResponse[] = "{\"status\":200";
-	
-/*	// Place the Xively request into the transmit buffer.
-	sprintf( tmpString,"{\"method\":\"PUT\", \"resource\":\"%s\", \"headers\":{\"X-ApiKey\":\"%s\"},"\
-	"\"body\":{\"version\" : \"1.0.0\", \"datastreams\":[{\"id\":\"ActivePower\", \"current_value\":\"%d\"},"\
-	"\{\"id\":\"CosPhy\", \"current_value\":\"%d\"},"\
-	"\{\"id\":\"Voltage\", \"current_value\":\"%d\"},"\
-	"\{\"id\":\"Current\", \"current_value\":\"%d\"}"\
-	"\]}}", Resource, XApiKey, *buf, *buf+1, *buf+2, *buf+3);
-*/
+
 	#if defined(STACK_USE_UART)
 	UARTWrite(1,tmpString);
 	#endif
@@ -63,9 +55,7 @@ BOOL XivelyPut(TCP_SOCKET MySocket, char* tmpString)
 	#if defined(STACK_USE_UART)
 	UARTWrite(1,"Data sent, Waiting response.\r\n");
 	#endif
-	//vTaskDelay( xDelay(500) );
 	vTaskDelay(500);
-
 	
 	// Make sure there are enough chars to read
 	i = 10;
@@ -106,22 +96,8 @@ BOOL XivelyPut(TCP_SOCKET MySocket, char* tmpString)
 		#if defined(STACK_USE_UART)
 		UARTWrite(1,"Server did not reply.\r\n");
 		#endif
-		result = TRUE;
-		Reset();
+		result = FALSE;
 	}
-	
-	//vTaskDelay( xDelay(500) );
-	vTaskDelay(500);
-	
-	/*NO DISCONNETTING*/
-	/*#if defined(STACK_USE_UART)
-	UARTWrite(1,"Disconnecting...");
-	#endif
-	TCPClientClose(MySocket);
-	MySocket = INVALID_SOCKET;
-	#if defined(STACK_USE_UART)
-	UARTWrite(1,"Done.\r\n");
-	#endif*/
 
 	vTaskDelay(500);
 	
