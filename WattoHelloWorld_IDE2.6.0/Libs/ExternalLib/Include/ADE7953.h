@@ -6,7 +6,7 @@
  * FileName:        ADE7953.h
  * Dependencies:    
  * Processor:       PIC24F
- * Compiler:        FLYPORT IDE 2.6.0
+ * Compiler:        
  * Company:         Presti Dario
  *
  * Software License Agreement
@@ -35,7 +35,7 @@
  *
  * Author               Date        Comment
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Dario Presti			28/02/2014	Original
+ * Dario Presti			15/01/2013	Original
  ********************************************************************/
  
 #include "HWlib.h"
